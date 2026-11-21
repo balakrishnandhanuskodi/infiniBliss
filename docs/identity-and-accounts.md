@@ -28,8 +28,9 @@ Format: `IB` + 10 digits, displayed `IB 4821 593 067`, stored `IB4821593067`.
 
 ## 3. Login methods (the "freedom to change" part)
 
-A person can hold several verified login methods at once (e.g. two mobiles + one
-email). Rules:
+Supabase Auth allows per account: **one mobile + one email**, plus optional linked
+Apple / Google sign-ins. Mobile OTP is the primary login; email is the backup.
+Rules:
 
 1. **At least one** verified login method must remain at all times.
 2. **Add** a new mobile/email → OTP sent to it → linked only after the code is entered.
@@ -73,19 +74,20 @@ All content belongs to the **Internal ID**, never to a mobile number, email or d
   and emails are **never shown** to other users.
 - **Calls:** a call log (who, when, duration, circle) is kept. Audio/video is not
   recorded unless a recording feature is added later, with clear consent.
-- **Encryption:** encrypted in transit (TLS) and at rest, but **not end-to-end**,
-  so Moderators can review reported content and history restores without key
-  backups. (Decision to confirm; E2E would need per-device keys + key backup and
-  limits moderation.)
+- **Encryption (decided):** encrypted in transit (TLS) and at rest, **not
+  end-to-end**, so Moderators can review reported content and history restores
+  without key backups.
 - **Deletion** (not number change) is the only event that removes history: the
-  user's personal data is erased; messages they sent in circles show as
-  "Deleted user" (or are removed — retention policy to decide).
+  user's personal data is erased; messages they sent in circles stay but show
+  the author as **"Former member"** (no name, no photo).
 
 ## 6. Roles
 
 `seeker` (end user), `rm` (relationship manager), `moderator`, `admin`.
 Stored on the account, enforced by database Row Level Security, not just in the UI.
 One primary role per account initially; can extend to multiple later.
+Everyone signs up as `seeker`. **Only Admins** grant `rm`, `moderator` or `admin`
+(`admin_set_role`, audited). The first Admin is set once manually in the database.
 
 ## 7. App-store & compliance requirements
 
@@ -100,10 +102,15 @@ One primary role per account initially; can extend to multiple later.
 - **India:** SMS OTP needs TRAI DLT registration (start early; WhatsApp OTP as
   alternative). DPDP Act 2023 consent at sign-up.
 
-## 8. Open items
+## 8. Implementation
 
-- Primary login method (mobile OTP first? email backup?) and supported countries.
-- Supabase project: existing or new, and region.
-- Who creates RM / Moderator / Admin accounts; do Seekers self-register or get invited by RMs?
-- End-to-end encryption vs server-side encryption (recommended: server-side, for moderation).
-- What happens to a deleted user's messages in circles: anonymise as "Deleted user" or remove.
+- Schema: `supabase/migrations/20261121000000_identity.sql`
+  (`accounts`, `profiles`, `devices`, `audit_log`, Account Number generation,
+  role helpers, Row Level Security).
+- Local test: `supabase/tests/run-local.sh` (plain Postgres with a stub `auth` schema).
+
+## 9. Open items
+
+- Supabase project to use (new project in Mumbai `ap-south-1` recommended).
+- Supported countries for mobile OTP (India first?).
+- Seekers self-register (assumed) vs invited by RMs.
