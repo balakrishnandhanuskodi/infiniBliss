@@ -104,6 +104,8 @@ Everyone signs up as `seeker`. **Only Admins** grant `rm`, `moderator` or `admin
 
 ## 8. OTP delivery (global users)
 
+User base: about **90% India, 10% other countries**.
+
 Supabase generates the OTP; a **Send SMS hook** (Supabase Edge Function) decides
 how to deliver it, routed by the phone's country code:
 
@@ -122,8 +124,9 @@ how to deliver it, routed by the phone's country code:
 - **India DLT:** the OTP message text must match the approved template exactly.
   Proposed template: `{#var#} is your infiniBliss verification code. Do not share it with anyone. {#var#}`
   (first variable = code, second = Android app hash for autofill).
-- **Option:** MSG91 also offers international SMS and WhatsApp, so one provider
-  could cover all countries; compare against Twilio on price per country.
+- **Recommended start:** MSG91 for everything (India SMS + WhatsApp/international
+  SMS for the 10% outside India), so there is one provider, one dashboard, one
+  bill. Add Twilio later only if delivery or price in some country is poor.
 - **Cost:** India SMS is very cheap; international SMS varies widely by country,
   which is why WhatsApp and email are preferred outside India.
 
