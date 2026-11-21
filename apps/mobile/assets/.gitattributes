@@ -1,0 +1,2 @@
+# App icons are small and must be available without Git LFS (EAS builds, this sandbox).
+*.png -filter -diff -merge -text
