@@ -109,7 +109,7 @@ how to deliver it, routed by the phone's country code:
 
 | Phone number | Primary | Fallback |
 |---|---|---|
-| India (+91) | SMS via a DLT-registered Indian provider (e.g. MSG91, Gupshup, Kaleyra) | WhatsApp |
+| India (+91) | SMS via **MSG91**, DLT-registered on **Vilpower** (entity ID, sender ID, approved OTP template) | WhatsApp |
 | Other countries | WhatsApp OTP (authentication template via Twilio or Meta WhatsApp Cloud API) | SMS via a global provider (e.g. Twilio) |
 | Any | Email OTP (free) is always available as backup login | — |
 
@@ -119,6 +119,11 @@ how to deliver it, routed by the phone's country code:
   registered sender IDs or templates; India requires DLT. Register before launch.
 - **Autofill:** OTP message formatted for iOS one-time-code autofill, Android SMS
   Retriever (app hash) and web OTP (`@domain #code`).
+- **India DLT:** the OTP message text must match the approved template exactly.
+  Proposed template: `{#var#} is your infiniBliss verification code. Do not share it with anyone. {#var#}`
+  (first variable = code, second = Android app hash for autofill).
+- **Option:** MSG91 also offers international SMS and WhatsApp, so one provider
+  could cover all countries; compare against Twilio on price per country.
 - **Cost:** India SMS is very cheap; international SMS varies widely by country,
   which is why WhatsApp and email are preferred outside India.
 
@@ -131,6 +136,6 @@ how to deliver it, routed by the phone's country code:
 
 ## 10. Open items
 
-- Supabase project to use (new project in Mumbai `ap-south-1` recommended).
-- Country list for OTP allowlist; choice of Indian SMS and global WhatsApp/SMS providers.
+- Supabase project: owner is creating it (Mumbai `ap-south-1`) and will share the project ref.
+- Country list for OTP allowlist; global WhatsApp/SMS provider (MSG91 vs Twilio). India: MSG91 + Vilpower DLT (decided).
 - Seekers self-register (assumed) vs invited by RMs.
