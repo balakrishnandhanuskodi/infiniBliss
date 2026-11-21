@@ -106,12 +106,17 @@ Everyone signs up as `seeker`. **Only Admins** grant `rm`, `moderator` or `admin
 
 User base: about **90% India, 10% other countries**.
 
+**Who owns the OTP (recommended):** Supabase Auth generates and verifies the code;
+MSG91 only delivers it (SendOTP / SMS API with our code + DLT template; WhatsApp
+outside India). We do **not** use the MSG91 OTP Widget, which would verify OTPs
+itself and force a second, custom login bridge into Supabase.
+
 Supabase generates the OTP; a **Send SMS hook** (Supabase Edge Function) decides
 how to deliver it, routed by the phone's country code:
 
 | Phone number | Primary | Fallback |
 |---|---|---|
-| India (+91) | SMS via **MSG91**, DLT-registered on **Vilpower** (entity ID, sender ID, approved OTP template) | WhatsApp |
+| India (+91) | SMS via **MSG91**, DLT-registered on **Vilpower**, sender ID **INFTSM** | WhatsApp |
 | Other countries | WhatsApp OTP (authentication template via Twilio or Meta WhatsApp Cloud API) | SMS via a global provider (e.g. Twilio) |
 | Any | Email OTP (free) is always available as backup login | — |
 
