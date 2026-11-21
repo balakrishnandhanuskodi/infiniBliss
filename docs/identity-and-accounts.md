@@ -58,13 +58,36 @@ Each app install instead gets:
 The user sees "Logged-in devices" in settings and can sign out any of them.
 Deleting the account or signing out removes the device record and push token.
 
-## 5. Roles
+## 5. History survives login-method and device changes
+
+All content belongs to the **Internal ID**, never to a mobile number, email or device.
+
+- Messages, circle memberships, media, voice notes, documents, call logs and
+  notifications are stored **on the server** (Supabase Postgres + Storage),
+  keyed by the Internal ID.
+- The phone only keeps a **cache** for speed and offline viewing.
+- Changing mobile/email → nothing moves; the account is the same.
+- New phone (same or new number) → log in with any linked method → history
+  downloads from the server. No manual backup/restore.
+- Other members are unaffected: they see the same name and photo. Mobile numbers
+  and emails are **never shown** to other users.
+- **Calls:** a call log (who, when, duration, circle) is kept. Audio/video is not
+  recorded unless a recording feature is added later, with clear consent.
+- **Encryption:** encrypted in transit (TLS) and at rest, but **not end-to-end**,
+  so Moderators can review reported content and history restores without key
+  backups. (Decision to confirm; E2E would need per-device keys + key backup and
+  limits moderation.)
+- **Deletion** (not number change) is the only event that removes history: the
+  user's personal data is erased; messages they sent in circles show as
+  "Deleted user" (or are removed — retention policy to decide).
+
+## 6. Roles
 
 `seeker` (end user), `rm` (relationship manager), `moderator`, `admin`.
 Stored on the account, enforced by database Row Level Security, not just in the UI.
 One primary role per account initially; can extend to multiple later.
 
-## 6. App-store & compliance requirements
+## 7. App-store & compliance requirements
 
 - **Account deletion** in-app (Apple 5.1.1(v), Google Play) plus a web deletion page.
   Personal data erased; Account Number retired; legally required records retained
@@ -77,8 +100,10 @@ One primary role per account initially; can extend to multiple later.
 - **India:** SMS OTP needs TRAI DLT registration (start early; WhatsApp OTP as
   alternative). DPDP Act 2023 consent at sign-up.
 
-## 7. Open items
+## 8. Open items
 
 - Primary login method (mobile OTP first? email backup?) and supported countries.
 - Supabase project: existing or new, and region.
 - Who creates RM / Moderator / Admin accounts; do Seekers self-register or get invited by RMs?
+- End-to-end encryption vs server-side encryption (recommended: server-side, for moderation).
+- What happens to a deleted user's messages in circles: anonymise as "Deleted user" or remove.
