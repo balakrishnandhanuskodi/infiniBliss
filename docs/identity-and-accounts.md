@@ -102,15 +102,35 @@ Everyone signs up as `seeker`. **Only Admins** grant `rm`, `moderator` or `admin
 - **India:** SMS OTP needs TRAI DLT registration (start early; WhatsApp OTP as
   alternative). DPDP Act 2023 consent at sign-up.
 
-## 8. Implementation
+## 8. OTP delivery (global users)
+
+Supabase generates the OTP; a **Send SMS hook** (Supabase Edge Function) decides
+how to deliver it, routed by the phone's country code:
+
+| Phone number | Primary | Fallback |
+|---|---|---|
+| India (+91) | SMS via a DLT-registered Indian provider (e.g. MSG91, Gupshup, Kaleyra) | WhatsApp |
+| Other countries | WhatsApp OTP (authentication template via Twilio or Meta WhatsApp Cloud API) | SMS via a global provider (e.g. Twilio) |
+| Any | Email OTP (free) is always available as backup login | — |
+
+- **Fraud control (SMS pumping):** country allowlist (only countries we serve),
+  per-number and per-IP rate limits, CAPTCHA before sending OTP.
+- **Sender registration:** many countries (US, UAE, Saudi Arabia, etc.) require
+  registered sender IDs or templates; India requires DLT. Register before launch.
+- **Autofill:** OTP message formatted for iOS one-time-code autofill, Android SMS
+  Retriever (app hash) and web OTP (`@domain #code`).
+- **Cost:** India SMS is very cheap; international SMS varies widely by country,
+  which is why WhatsApp and email are preferred outside India.
+
+## 9. Implementation
 
 - Schema: `supabase/migrations/20261121000000_identity.sql`
   (`accounts`, `profiles`, `devices`, `audit_log`, Account Number generation,
   role helpers, Row Level Security).
 - Local test: `supabase/tests/run-local.sh` (plain Postgres with a stub `auth` schema).
 
-## 9. Open items
+## 10. Open items
 
 - Supabase project to use (new project in Mumbai `ap-south-1` recommended).
-- Supported countries for mobile OTP (India first?).
+- Country list for OTP allowlist; choice of Indian SMS and global WhatsApp/SMS providers.
 - Seekers self-register (assumed) vs invited by RMs.
