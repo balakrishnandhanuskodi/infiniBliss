@@ -1,0 +1,6 @@
+# Supabase CLI project config (partial). Project ref: dspenyxjhdrljccrsord
+project_id = "dspenyxjhdrljccrsord"
+
+[functions.send-sms]
+# Called by Supabase Auth with a webhook signature, not a user JWT.
+verify_jwt = false
