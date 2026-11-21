@@ -1,0 +1,10 @@
+{
+  "description": "A modern messaging and calling app for individuals and groups, bringing chats, rich media, and live presence together for effortless connection.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

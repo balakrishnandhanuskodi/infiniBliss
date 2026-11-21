@@ -1,0 +1,4 @@
+# AgentPlat packages this default favicon directly from source without LFS hydration.
+favicon.png -filter -diff -merge -text
+# Placeholder mockup image, stored as a plain blob (small; avoids LFS dependency).
+pulsewave-rooftop.jpg -filter -diff -merge -text
